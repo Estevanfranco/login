@@ -1,42 +1,58 @@
+import { CommonModule } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login-page',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, CommonModule],
   templateUrl: './login-page.component.html',
-  styleUrl: './login-page.component.css'
+  styleUrl: './login-page.component.css',
 })
 export class LoginPageComponent {
-    fb = inject(FormBuilder);
-    hasError = signal (false);
-    type='password';
-    icon='bi bi-eye';
+
+  authService = inject(AuthService);
+
+  hasError= signal(false);
+  fb = inject(FormBuilder);
+
+  type = 'password';
+  icon = 'bi bi-eye';
 
   showPassword(type: string) {
     if (type === 'password') {
       this.type = 'text';
-      this.icon ='bi bi-eye-slash';
+      this.icon = 'bi bi-eye-slash';
     } else {
       this.type = 'password';
-      this.icon ='bi bi-eye';
+      this.icon = 'bi bi-eye';
     }
   }
-  loginForm = this.fb.group({
-    email: ['',[Validators.required, Validators.email]],
-    password: ['',[Validators.required, Validators.minLength(6)]],
-  });
+
+  logginForm = this.fb.group({
+    correo: ['', [Validators.required, Validators.email]],
+    contrasena : ['', [Validators.required, Validators.minLength(6), Validators.maxLength(15) ] ]
+  })
 
   onSubmit() {
-    if (this.loginForm.invalid) {
-      this.hasError.set(true);
-      setTimeout(() => {
-        this.hasError.set(false);
-      }, 2000);
-      return;
-    } 
-    const {email = '', password = ''} = this.loginForm.value;
-    console.log(email, password);
+  if (this.logginForm.invalid) {
+    this.hasError.set(true);
+    setTimeout(() => {
+      this.hasError.set(false);
+    }, 2000);
+    return;
   }
-  
+
+ const { correo = '', contrasena = '' } = this.logginForm.value;
+this.authService.login(correo!, contrasena!).subscribe((isAuthenticated) => {
+  if (isAuthenticated) {
+    alert('Logueado');
+    return;
+  }
+  this.hasError.set(true);
+  setTimeout(() => {
+    this.hasError.set(false);
+  }, 2000);
+});
+  }
 }

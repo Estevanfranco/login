@@ -8,5 +8,5 @@ import { HttpClient } from '@angular/common/http';
 export class BaseHttpService {
 
   protected http= inject(HttpClient);
-  protected apiurl = environment.apiURL; // Replace with your API URL
+  protected apiURL = environment.apiURL; // Replace with your API URL
 }

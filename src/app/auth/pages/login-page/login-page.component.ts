@@ -53,6 +53,7 @@ this.authService.login(correo!, contrasena!).subscribe((isAuthenticated) => {
   setTimeout(() => {
     this.hasError.set(false);
   }, 2000);
+  return;
 });
   }
 }
